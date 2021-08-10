@@ -6,5 +6,6 @@ declare module 'styled-components' {
     dir: 'ltr' | 'rtl';
     sidebarHeaderGap: string;
     gridSize: number;
+    currency: 'aed' | 'usd' | 'php';
   }
 }

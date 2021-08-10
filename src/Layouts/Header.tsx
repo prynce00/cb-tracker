@@ -4,12 +4,7 @@ import styled, { DefaultTheme } from 'styled-components';
 import Select from '@paljs/ui/Select';
 import { LayoutHeader } from '@paljs/ui/Layout';
 import { EvaIcon } from '@paljs/ui/Icon';
-import { Button } from '@paljs/ui/Button';
 import { Actions } from '@paljs/ui/Actions';
-import ContextMenu from '@paljs/ui/ContextMenu';
-import User from '@paljs/ui/User';
-import { getPathReady } from './Sidebar';
-import { Location } from '@reach/router';
 import { breakpointDown } from '@paljs/ui/breakpoints';
 
 const HeaderStyle = styled.div`
@@ -56,8 +51,11 @@ interface HeaderProps {
     set: (value: DefaultTheme['name']) => void;
     value: DefaultTheme['name'];
   };
+  currency: {
+    set: (value: 'aed') => void;
+    value: 'aed';
+  };
   changeDir: () => void;
-  dir: 'rtl' | 'ltr';
 }
 
 const Header: React.FC<HeaderProps> = (props) => {
@@ -67,7 +65,7 @@ const Header: React.FC<HeaderProps> = (props) => {
       label: (
         <Label>
           <EvaIcon name="droplet" options={{ fill: '#a6c1ff' }} />
-          Default
+          White
         </Label>
       ),
     },
@@ -80,26 +78,23 @@ const Header: React.FC<HeaderProps> = (props) => {
         </Label>
       ),
     },
+  ];
+
+  const currencyOptions = [
     {
-      value: 'cosmic',
-      label: (
-        <Label>
-          <EvaIcon name="droplet" options={{ fill: '#5a37b8' }} />
-          Cosmic
-        </Label>
-      ),
+      value: 'aed',
+      label: <Label>AED</Label>,
     },
     {
-      value: 'corporate',
-      label: (
-        <Label>
-          <EvaIcon name="droplet" options={{ fill: '#3366ff' }} />
-          Corporate
-        </Label>
-      ),
-      selected: true,
+      value: 'usd',
+      label: <Label>USD</Label>,
+    },
+    {
+      value: 'php',
+      label: <Label>PHP</Label>,
     },
   ];
+
   return (
     <LayoutHeader fixed>
       <HeaderStyle>
@@ -115,7 +110,7 @@ const Header: React.FC<HeaderProps> = (props) => {
             {
               content: (
                 <Link to="/" className="logo">
-                  Admin Template
+                  CB Tracker
                 </Link>
               ),
             },
@@ -133,59 +128,14 @@ const Header: React.FC<HeaderProps> = (props) => {
             },
             {
               content: (
-                <Button size="Small" onClick={() => props.changeDir()}>
-                  {props.dir}
-                </Button>
-              ),
-            },
-          ]}
-        />
-        <Actions
-          size="Small"
-          className="right"
-          actions={[
-            {
-              content: (
-                <a
-                  className="left"
-                  href={`https://github.com/paljs/gatsby-admin-template`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <span className="github">Support us in GitHub</span>
-                  <img src={`https://badgen.net/github/stars/paljs/gatsby-admin-template`} />
-                </a>
-              ),
-            },
-            {
-              content: (
-                <a href="https://discord.gg/NRmdvDxsT8" target="_blank" rel="noreferrer">
-                  <img height="20" src="/discord.svg" alt="slack" />
-                </a>
-              ),
-            },
-            {
-              icon: 'twitter',
-              url: { href: 'https://twitter.com/AhmedElywh', target: '_blank' },
-            },
-            {
-              content: (
-                <Location>
-                  {({ location }) => (
-                    <ContextMenu
-                      style={{ cursor: 'pointer' }}
-                      placement="bottom"
-                      currentPath={getPathReady(location.pathname)}
-                      items={[
-                        { title: 'Profile', link: { to: '/modal-overlays/tooltip' } },
-                        { title: 'Log out', link: { to: '/logout' } },
-                      ]}
-                      Link={Link}
-                    >
-                      <User image="url('/icons/icon-72x72.png')" name="Ahmed Elywa" title="Manger" size="Medium" />
-                    </ContextMenu>
-                  )}
-                </Location>
+                <SelectStyled
+                  isSearchable={false}
+                  shape="SemiRound"
+                  placeholder="Currency"
+                  value={currencyOptions.find((item) => item.value === props.currency.value)}
+                  options={currencyOptions}
+                  onChange={({ value }: { value: 'aed' }) => props.currency.set(value)}
+                />
               ),
             },
           ]}

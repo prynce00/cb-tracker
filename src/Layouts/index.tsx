@@ -17,8 +17,15 @@ const getDefaultTheme = (): DefaultTheme['name'] => {
   }
 };
 
+const getDefaultCurrency = (): DefaultTheme['currency'] => {
+  if (typeof localStorage !== 'undefined' && localStorage.getItem('currency')) {
+    return localStorage.getItem('currency') as DefaultTheme['currency'];
+  }
+};
+
 const LayoutPage: React.FC<{ pageContext: { layout: string } }> = ({ children, pageContext }) => {
   const [theme, setTheme] = useState<DefaultTheme['name']>('default');
+  const [currency, setCurrency] = useState<DefaultTheme['currency']>('aed');
   const [dir, setDir] = useState<'ltr' | 'rtl'>('ltr');
   const sidebarRef = useRef<SidebarRefObject>(null);
 
@@ -27,10 +34,20 @@ const LayoutPage: React.FC<{ pageContext: { layout: string } }> = ({ children, p
     typeof localStorage !== 'undefined' && localStorage.setItem('theme', newTheme);
   };
 
+  const changeCurrency = (newCurrency: DefaultTheme['currency']) => {
+    setCurrency(newCurrency);
+    typeof localStorage !== 'undefined' && localStorage.setItem('currency', newCurrency);
+  };
+
   useEffect(() => {
     const localTheme = getDefaultTheme();
     if (localTheme !== theme && theme === 'default') {
       setTheme(localTheme);
+    }
+
+    const localCurrency = getDefaultCurrency();
+    if (localCurrency !== currency) {
+      setCurrency(localCurrency);
     }
   }, []);
 
@@ -46,7 +63,7 @@ const LayoutPage: React.FC<{ pageContext: { layout: string } }> = ({ children, p
         <Layout evaIcons={icons} dir={dir} className={pageContext.layout === 'auth' ? 'auth-layout' : ''}>
           {pageContext.layout !== 'auth' && (
             <Header
-              dir={dir}
+              currency={{ set: changeCurrency, value: currency }}
               changeDir={changeDir}
               theme={{ set: changeTheme, value: theme }}
               toggleSidebar={() => sidebarRef.current?.toggle()}
@@ -58,7 +75,7 @@ const LayoutPage: React.FC<{ pageContext: { layout: string } }> = ({ children, p
               <LayoutColumns>
                 <LayoutColumn className="main-content">{children}</LayoutColumn>
               </LayoutColumns>
-              {pageContext.layout !== 'auth' && <LayoutFooter>Footer</LayoutFooter>}
+              {pageContext.layout !== 'auth' && <LayoutFooter>#ROI</LayoutFooter>}
             </LayoutContent>
           </LayoutContainer>
         </Layout>
